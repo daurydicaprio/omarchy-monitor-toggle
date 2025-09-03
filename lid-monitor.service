@@ -1,11 +1,13 @@
 [Unit]
 Description=Handle lid close events for Hyprland
-After=graphical.target
+After=graphical-session.target hyprland-session.target
+PartOf=graphical-session.target hyprland-session.target
 
 [Service]
 ExecStart=%h/.local/bin/lid-manager
+ExecStartPre=/bin/sleep 5
 Restart=always
 Type=simple
 
 [Install]
-WantedBy=default.target
+WantedBy=graphical-session.target
