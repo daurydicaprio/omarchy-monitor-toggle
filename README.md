@@ -6,19 +6,33 @@ Created by **Daury Dicaprio** ([daurydicaprio.com](https://daurydicaprio.com)) |
 
 ---
 
+### 📋 How to Use
+
+Once installed, this suite provides two main functionalities:
+
+#### **1. Automatic Lid Control**
+-   **Close your laptop lid:** The laptop screen will automatically turn off with a notification.
+-   **Open your laptop lid:** The laptop screen will automatically turn back on.
+
+#### **2. Manual Monitor Toggle (Keyboard Shortcuts)**
+-   Press **`Super + Ctrl + D`** to toggle your primary (laptop) monitor on and off.
+-   Press **`Super + Ctrl + F`** to toggle your external monitor on and off.
+
+*You can customize these shortcuts by editing `~/.config/hypr/bindings.conf`.*
+
+---
+
 ### ✨ Features
 
-*   **Safe Monitor Toggle:** Use keyboard shortcuts to turn monitors on/off. A safety check prevents you from disabling your last active display.
-*   **Reliable Lid Management:** A persistent `systemd` service directly monitors the lid state, providing instant, non-stacking notifications and safe power management.
-*   **Clean & Independent:** Installs as separate user scripts and services, respecting the Omarchy philosophy of keeping base files untouched.
+*   **Safe Monitor Toggle:** A safety check prevents you from disabling your last active display.
+-   **Reliable Lid Management:** A persistent `systemd` service directly monitors the lid state for instant and reliable actions.
+-   **Clean & Independent:** Installs as separate user scripts, respecting the Omarchy philosophy of keeping base files untouched.
 
 ### 💡 Use Cases
 
-This tool is ideal for users who need flexible display management:
-
-*   **Monotasking Focus:** Instantly turn off your secondary monitor to focus on a single task on your main display.
-*   **"Clamshell" Mode:** Place your laptop under the desk and use only your external monitor. This tool allows you to safely turn off the laptop screen.
-*   **Desktop Focus:** Keep your laptop on the desk but turn off its screen to create a cleaner, less distracting workspace.
+*   **Monotasking Focus:** Instantly turn off your secondary monitor to focus on a single task.
+*   **"Clamshell" Mode:** Use your laptop with the lid closed, connected to an external monitor.
+*   **Desktop Focus:** Keep your laptop on the desk but turn off its screen to create a cleaner workspace.
 
 ---
 
@@ -31,30 +45,27 @@ This tool is ideal for users who need flexible display management:
     ```
 
 2.  **Make Scripts Executable:**
-    (This ensures the scripts have the correct permissions after cloning)
     ```sh
     chmod +x install.sh toggle-monitor lid-manager
     ```
 
 3.  **Run the Installer:**
     ```sh
+
     ./install.sh
     ```
 
-After installation, **Reload Hyprland** (`Super + M` > `Reload`) to activate all features.
+After installation, **Reload Hyprland** to activate all features.
 
 ---
 
 ### 🔧 Prerequisite: `logind.conf`
 
-For the automatic lid close detection to work reliably, your system must not suspend or hibernate when the lid is closed. You need to tell `systemd-logind` to pass the event to the desktop environment.
+For the automatic lid control to work, your system must not suspend when the lid is closed. You need to tell `systemd-logind` to ignore the event.
 
-1.  Edit the file with `sudo nano /etc/systemd/logind.conf`.
-2.  Find the line `#HandleLidSwitch=suspend` and change it to:
-    ```
-    HandleLidSwitch=ignore
-    ```
-3.  Save the file and **reboot** your system for the change to take effect.
+1.  Edit the file: `sudo nano /etc/systemd/logind.conf`.
+2.  Change or add the line: `HandleLidSwitch=ignore`.
+3.  Save the file and **reboot**.
 
 ---
 

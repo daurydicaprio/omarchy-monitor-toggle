@@ -24,7 +24,7 @@ echo "Systemd service 'lid-monitor.service' enabled and started."
 
 # Step 3: Add keyboard shortcuts
 echo "[3/3] Adding keyboard shortcuts to '$BINDINGS_FILE'..."
-SHORTCUT_BLOCK=$'\n# Custom shortcuts for Omarchy Monitor Toggle\nbind = SUPER CTRL, D, exec, ~/.local/bin/toggle-monitor eDP-1\nbind = SUPER CTRL, F, exec, ~/.local/bin/toggle-monitor DP-1'
+SHORTCUT_BLOCK=$'\n# Custom shortcuts for Omarchy Monitor Toggle\nbindd = SUPER CTRL, D, Toggle Laptop Screen, exec, ~/.local/bin/toggle-monitor eDP-1\nbindd = SUPER CTRL, F, Toggle External Screen, exec, ~/.local/bin/toggle-monitor DP-1'
 if ! grep -q "toggle-monitor" "$BINDINGS_FILE"; then
     echo "$SHORTCUT_BLOCK" >> "$BINDINGS_FILE"
     echo "Shortcuts added."
