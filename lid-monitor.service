@@ -1,0 +1,11 @@
+[Unit]
+Description=Handle lid close events for Hyprland
+After=graphical.target
+
+[Service]
+ExecStart=%h/.local/bin/lid-manager
+Restart=always
+Type=simple
+
+[Install]
+WantedBy=default.target

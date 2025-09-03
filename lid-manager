@@ -1,0 +1,51 @@
+#!/bin/bash
+# Lid manager for Hyprland - v3.0 with Lock File
+# Prevents multiple instances and duplicate notifications.
+
+INTERNAL_MONITOR="eDP-1"
+LID_STATE_FILE="/proc/acpi/button/lid/LID0/state"
+LOCK_FILE="/tmp/lid-manager.lock"
+NOTIFICATION_ID="9991"
+
+# --- Lock File Logic ---
+# Exit if another instance is already running
+if [ -f "$LOCK_FILE" ]; then
+    PID=$(cat "$LOCK_FILE")
+    # Check if the process with that PID is actually running
+    if ps -p "$PID" > /dev/null 2>&1; then
+        # If it is, exit quietly.
+        exit 0
+    fi
+fi
+
+# Create the lock file with our own PID
+echo $$ > "$LOCK_FILE"
+# Ensure the lock file is removed when the script exits
+trap "rm -f $LOCK_FILE; exit" INT TERM EXIT
+
+
+# --- Main Loop ---
+if [ ! -f "$LID_STATE_FILE" ]; then
+    exit 1
+fi
+
+last_state=$(awk '{print $2}' "$LID_STATE_FILE")
+
+while true; do
+    current_state=$(awk '{print $2}' "$LID_STATE_FILE")
+    if [ "$current_state" != "$last_state" ]; then
+        if [ "$current_state" == "closed" ]; then
+            hyprctl keyword monitor "$INTERNAL_MONITOR,disable"
+            notify-send -r "$NOTIFICATION_ID" "Laptop Screen Off" \
+                "You closed the lid. To reactivate manually, press SUPER + CTRL + D." \
+                -i display-off-symbolic
+        elif [ "$current_state" == "open" ]; then
+            hyprctl keyword monitor "$INTERNAL_MONITOR,preferred,auto,1"
+            notify-send -r "$NOTIFICATION_ID" "Laptop Screen On" \
+                "The laptop screen is now active." \
+                -i display-on-symbolic
+        fi
+        last_state="$current_state"
+    fi
+    sleep 1
+done

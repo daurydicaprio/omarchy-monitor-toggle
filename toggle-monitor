@@ -1,0 +1,34 @@
+#!/bin/bash
+# Script to toggle a specific monitor on/off safely (v2.0 with improved notifications).
+
+MONITOR_ID=$1
+if [ -z "$MONITOR_ID" ]; then exit 1; fi
+
+if [ "$MONITOR_ID" == "eDP-1" ]; then
+    FRIENDLY_NAME="Laptop Screen"
+    NOTIFICATION_ID="9992"
+elif [ "$MONITOR_ID" == "DP-1" ]; then
+    FRIENDLY_NAME="External Screen"
+    NOTIFICATION_ID="9993"
+else
+    FRIENDLY_NAME=$MONITOR_ID
+    NOTIFICATION_ID="9994"
+fi
+
+ACTIVE_MONITOR_LIST=$(hyprctl monitors)
+
+if echo "$ACTIVE_MONITOR_LIST" | grep -q "Monitor $MONITOR_ID"; then
+    # TURN OFF LOGIC
+    if [ "$(echo "$ACTIVE_MONITOR_LIST" | grep -c "Monitor")" -le 1 ]; then
+        notify-send "Safety Alert" "Cannot disable the last active display." -u critical
+    else
+        hyprctl keyword monitor "$MONITOR_ID,disable"
+        notify-send -r "$NOTIFICATION_ID" "$FRIENDLY_NAME Off" "The $FRIENDLY_NAME is now inactive." -i display-off-symbolic
+    fi
+else
+    # TURN ON LOGIC
+    hyprctl keyword monitor "$MONITOR_ID,preferred,auto,1"
+    notify-send -r "$NOTIFICATION_ID" "$FRIENDLY_NAME On" "The $FRIENDLY_NAME is now active." -i display-on-symbolic
+fi
+
+exit 0
